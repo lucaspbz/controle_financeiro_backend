@@ -1,10 +1,7 @@
 import cors from "cors";
-import "dotenv/config";
 import express from "express";
+import "./setup";
 
-import "express-async-errors";
-import "reflect-metadata";
-import "./container";
 import setupDatabase from "./database";
 import errorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
 import routes from "./routes";
