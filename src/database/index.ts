@@ -4,7 +4,7 @@ export default async function setupDatabase(): Promise<void> {
   const defaultOptions = await getConnectionOptions();
 
   if (process.env.NODE_ENV === "development") {
-    Object.assign(defaultOptions, { url: process.env.DATABASE_URL });
+    Object.assign(defaultOptions, { url: process.env.DATABASE_URL, ssl: true });
   }
 
   createConnection(defaultOptions)
