@@ -49,17 +49,7 @@ jobs:
       - name: Build
         run: yarn build
 
-      # # Runs a single command using the runners shell
-      # - name: Login to Heroku Container Registry
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:login
+      - name: Run Tests
+        run: yarn test
 
-      # - name: Build and push
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME_STAGING }} web
-      # - name: Release
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME_STAGING }} web
+
