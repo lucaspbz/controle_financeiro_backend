@@ -6,7 +6,9 @@ export default async function setupDatabase(): Promise<void> {
   if (process.env.NODE_ENV !== "development") {
     console.log(process.env.DATABASE_URL);
     Object.assign(defaultOptions, {
-      ssl: true,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
   }
 
