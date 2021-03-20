@@ -1,10 +1,11 @@
+import { isCelebrateError } from "celebrate";
 import { NextFunction, Request, Response } from "express";
 
-import AppError from "./AppError";
+import AppError from "../Error/AppError";
 
 export default function errorHandlerMiddleware(
   err: Error,
-  request: Request,
+  __: Request,
   response: Response,
   _: NextFunction
 ): Response {
@@ -13,6 +14,19 @@ export default function errorHandlerMiddleware(
       status: "error",
       message: err.message,
       details: [],
+    });
+  }
+
+  if (isCelebrateError(err)) {
+    const details: string[] = [];
+    err.details.forEach((detail) => {
+      details.push(detail.message);
+    });
+
+    return response.status(400).json({
+      status: "validation error",
+      message: err.message,
+      details,
     });
   }
 
