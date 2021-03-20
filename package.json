@@ -1,10 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/server.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
+    "migrate": "yarn typeorm migration:run",
+    "predev:server":"docker start postgres-controle-financeiro",
     "dev:server": "NODE_ENV=development ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "start": "node ./dist/server.js",
     "test": "jest",

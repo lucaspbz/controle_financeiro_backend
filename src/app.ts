@@ -1,13 +1,10 @@
 import cors from "cors";
-import "dotenv/config";
 import express from "express";
 
-import "express-async-errors";
-import "reflect-metadata";
-import "./container";
-import setupDatabase from "./database";
+import { setupDatabase } from "./database";
 import errorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
 import routes from "./routes";
+import "./setup";
 
 setupDatabase();
 
@@ -25,4 +22,4 @@ app.get("/", async (request, response) => {
 
 app.use(errorHandlerMiddleware);
 
-export default app;
+export { app };

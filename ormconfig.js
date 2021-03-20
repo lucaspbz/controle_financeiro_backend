@@ -1,12 +1,17 @@
-require('dotenv').config();
+import dotenv from 'dotenv'
 
-module.exports = {
+dotenv.config();
+
+export default {
   type: 'postgres',
   host: `${process.env.DB_HOST}`,
   port: `${process.env.DB_PORT}`,
   username: `${process.env.DB_USER}`,
   password: `${process.env.DB_PASSWORD}`,
   url: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV !== 'development'
+      ? { rejectUnauthorized: false }
+      : false,
   schema: process.env.NODE_ENV === 'test' ? 'test' : 'public',
   entities:
     process.env.NODE_ENV === 'development'
