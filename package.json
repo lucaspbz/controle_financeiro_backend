@@ -13,8 +13,9 @@
     "typeorm": "^0.2.31"
   },
   "scripts": {
+    "build": "tsc",
     "dev:server": "NODE_ENV=development ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
-    "start": "node ./src/server.js"
+    "start": "node ./dist/server.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",
