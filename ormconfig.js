@@ -8,6 +8,7 @@ module.exports = {
   // password: `${process.env.DB_PASSWORD}`,
   // database: 'controle_financeiro',
   url: process.env.DATABASE_URL,
+  ssl: true,
   schema: process.env.NODE_ENV === 'test' ? 'test' : 'public',
   entities:
     process.env.NODE_ENV === 'development'
