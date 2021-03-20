@@ -18,6 +18,10 @@ app.use(express.json());
 
 app.use(routes);
 
+app.get("/", async (request, response) => {
+  return response.json({ message: "Hello world" });
+});
+
 app.use(errorHandlerMiddleware);
 
 export default app;
