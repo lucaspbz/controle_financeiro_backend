@@ -4,10 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node ./dist/src/server.js",
-    "build": "tsc",
+    "build": "tsc && yarn typeorm migration:run",
     "dev:server": "NODE_ENV=development ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
-    "prestart":"npm run build",
+    "start": "node ./dist/src/server.js",
     "test": "jest",
     "typeorm": "NODE_ENV=development ts-node-dev ./node_modules/typeorm/cli.js"
   },
