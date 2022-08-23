@@ -7,6 +7,7 @@ import errorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
 import routes from "./routes";
 
 setupDatabase();
+console.log("oi");
 
 const app = express();
 
