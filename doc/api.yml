@@ -1,0 +1,701 @@
+openapi: 3.0.0
+info:
+  title: ERP Backend API
+  description: Backend for ERP service
+  version: 0.0.1
+servers:
+  - url: http://localhost:3333
+    description: Local development server
+tags:
+  - name: Session
+    description: Sessions endpoints
+  - name: Admin
+    description: Endpoints only users type "admin" have access
+  - name: Me
+    description: Endpoints related to logged user
+  - name: Clients
+    description: Endpoints related to Clients
+  - name: Products
+    description: Endpoints related to Products
+  - name: Orders
+    description: Endpoints related to Orders
+paths:
+  /login:
+    post:
+      summary: Creates a session.
+      tags:
+        - Session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - name
+                - password
+      responses:
+        200:
+          description: Created user Id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                      - admin
+                      - seller
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /admin/users:
+    post:
+      summary: Creates a user.
+      security:
+        - bearerAuth: []
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                cpf:
+                  type: string
+                cnpj:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                    - admin
+                    - seller
+              required:
+                - name
+                - email
+      responses:
+        200:
+          description: Created user Id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  password:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+    get:
+      summary: Lists Users.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum:
+              - admin
+              - seller
+          description: User type to filter
+
+      tags:
+        - Admin
+      responses:
+        201:
+          description: Found users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    active:
+                      type: boolean
+                    cpf:
+                      type: string
+                    cnpj:
+                      type: string
+                  required:
+                    - id
+                    - email
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+  /admin/users/{userId}:
+    put:
+      summary: Updates a User.
+      security:
+        - bearerAuth: []
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                cpf:
+                  type: string
+                cnpj:
+                  type: string
+      responses:
+        200:
+          description: Updated fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  cpf:
+                    type: string
+                  cnpj:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+  /me:
+    get:
+      summary: Gets logged user' info.
+      security:
+        - bearerAuth: []
+      tags:
+        - Me
+      responses:
+        200:
+          description: Found users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  cpf:
+                    type: string
+                  cnpj:
+                    type: string
+                required:
+                  - id
+                  - email
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      summary: Updates Logged user info.
+      security:
+        - bearerAuth: []
+      tags:
+        - Me
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                cpf:
+                  type: string
+                cnpj:
+                  type: string
+      responses:
+        200:
+          description: Updated fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  cpf:
+                    type: string
+                  cnpj:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /me/password:
+    put:
+      summary: Updates Logged user password.
+      security:
+        - bearerAuth: []
+      tags:
+        - Me
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minimum: 8
+                  maximum: 20
+                newPasswordConfirmation:
+                  type: string
+                  minimum: 8
+                  maximum: 20
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /clients:
+    post:
+      summary: Creates a client.
+      security:
+        - bearerAuth: []
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                cpf:
+                  type: string
+                cnpj:
+                  type: string
+              required:
+                - name
+      responses:
+        201:
+          description: Created client Id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      summary: Lists Clients.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: filters
+          schema:
+            type: string
+      tags:
+        - Clients
+      responses:
+        200:
+          description: Found clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    active:
+                      type: boolean
+                    cpf:
+                      type: string
+                    cnpj:
+                      type: string
+                  required:
+                    - id
+                    - email
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /clients/{id}:
+    put:
+      summary: Updates client info.
+      security:
+        - bearerAuth: []
+      tags:
+        - Clients
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                cpf:
+                  type: string
+                cnpj:
+                  type: string
+      responses:
+        200:
+          description: Updated fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  cpf:
+                    type: string
+                  cnpj:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+  /products:
+    post:
+      summary: Creates a product.
+      security:
+        - bearerAuth: []
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  description: Product Value in cents
+                  minimum: 0
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    description: Tags to be used for list and price updates
+              required:
+                - name
+                - price
+      responses:
+        201:
+          description: Created product Id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      summary: Lists product.
+      security:
+        - bearerAuth: []
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: tags
+          schema:
+            type: string
+        - in: query
+          name: filters
+          schema:
+            type: string
+      responses:
+        200:
+          description: Found products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    value:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                       type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /products/{id}:
+    put:
+      summary: Updates a product.
+      security:
+        - bearerAuth: []
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  description: Product Value in cents
+                  minimum: 0
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    description: Tags to be used for list and price updates
+      responses:
+        200:
+          description: Updated fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  price:
+                    type: number
+                    description: Product Value in cents
+                    minimum: 0
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                      description: Tags to be used for list and price updates
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+  /orders:
+    post:
+      summary: Creates a order.
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  type: string
+                  description: Buyer's ID
+                products:
+                  type: array
+                  description: Product ids
+                  items:
+                    type: string
+                observations:
+                  type: string
+              required:
+                - client
+                - products
+      responses:
+        201:
+          description: Created order Id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      summary: Lists orders.
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+      responses:
+        200:
+          description: Found orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    observations:
+                      type: string
+                    totalPrice:
+                      type: number
+                    products:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          price:
+                            type: number
+                            minimum: 0
+                          description:
+                            type: string
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    BadRequest:
+      description: One or more parameters are invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Permission denied.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Access credentials invalid, expired or not existent.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Error:
+      type: object
+      properties:
+        error_code:
+          type: string
+        error_message:
+          type: string
